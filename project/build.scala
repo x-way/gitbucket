@@ -50,7 +50,8 @@ object MyBuild extends Build {
       "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container;provided",
       "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided;test" artifacts Artifact("javax.servlet", "jar", "jar"),
       "junit" % "junit" % "4.11" % "test",
-      "com.typesafe.play" %% "twirl-compiler" % "1.0.2"
+      "com.typesafe.play" %% "twirl-compiler" % "1.0.2",
+      "org.ocpsoft.prettytime" % "prettytime" % "3.2.5.Final"
     ),
     EclipseKeys.withSource := true,
     javacOptions in compile ++= Seq("-target", "6", "-source", "6"),

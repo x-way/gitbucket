@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat
 import play.twirl.api.Html
 import util.StringUtil
 import service.RequestCache
+import org.ocpsoft.prettytime.PrettyTime
+import org.ocpsoft.prettytime.units.{JustNow, Minute, Hour, Day, Month, Year}
+import org.ocpsoft.prettytime.impl.ResourcesTimeFormat
 
 /**
  * Provides helper methods for Twirl templates.
@@ -13,7 +16,25 @@ object helpers extends AvatarImageProvider with LinkConverter with RequestCache 
   /**
    * Format java.util.Date to "yyyy-MM-dd HH:mm:ss".
    */
-  def datetime(date: Date): String = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date)
+  def datetime(date: Date): String =
+    if ((new Date().getTime() - 30*24*3600*1000) < date.getTime()) prettytime(date)
+    else if (new Date().getYear() == date.getYear()) new SimpleDateFormat("'on' MMM dd").format(date)
+    else new SimpleDateFormat("'on' MMM dd, YYYY").format(date)
+
+  /**
+   * Format java.util.Date to "3 minutes ago".
+   */
+  def prettytime(date: Date): String = {
+    val f = new PrettyTime(new Date())
+    f.clearUnits()
+    f.registerUnit(new JustNow(), new ResourcesTimeFormat(new JustNow()))
+    f.registerUnit(new Minute(), new ResourcesTimeFormat(new Minute()))
+    f.registerUnit(new Hour(), new ResourcesTimeFormat(new Hour()))
+    f.registerUnit(new Day(), new ResourcesTimeFormat(new Day()))
+    f.registerUnit(new Month(), new ResourcesTimeFormat(new Month()))
+    f.registerUnit(new Year(), new ResourcesTimeFormat(new Year()))
+    f.format(date)
+  }
 
   /**
    * Format java.util.Date to "yyyy-MM-dd'T'hh:mm:ss'Z'".
